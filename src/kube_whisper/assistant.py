@@ -1,11 +1,13 @@
 """
 Main assistant implementation.
 """
+
 from typing import Optional
 from .audio.microphone import Microphone
 from .llm.deepseek import DeepSeekLLM
 from .k8s.k8s_tools import K8sTools
 from .registry.function_registry import FunctionRegistry
+
 
 class Assistant:
     def __init__(self):

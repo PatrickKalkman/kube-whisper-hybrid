@@ -1,7 +1,9 @@
 """
 DeepSeek LLM integration.
 """
+
 from typing import List, Dict, Any
+
 
 class DeepSeekLLM:
     def __init__(self, model_name: str = "deepseek-coder"):
@@ -12,7 +14,9 @@ class DeepSeekLLM:
         # Implementation to be added
         pass
 
-    async def function_call(self, prompt: str, functions: List[Dict[str, Any]]) -> Dict[str, Any]:
+    async def function_call(
+        self, prompt: str, functions: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         """Make a function call through the LLM"""
         # Implementation to be added
         pass
