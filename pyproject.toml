@@ -1,0 +1,15 @@
+[project]
+name = "kube-whisper-local"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = "==3.11.11"
+dependencies = [
+    "langchain-openai>=0.3.2",
+    "mlx-whisper>=0.4.1",
+    "pyaudio>=0.2.14",
+    "python-dotenv>=1.0.1",
+    "soundcard>=0.4.3",
+    "sounddevice>=0.5.1",
+    "speechrecognition>=3.14.1",
+]
