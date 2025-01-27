@@ -2,6 +2,7 @@ import unittest
 import logging
 from kubewhisper.registry.function_registry import FunctionRegistry
 from kubewhisper.llm.deepseek import DeepSeekLLM
+from kubewhisper.k8s import k8s_tools
 
 # Configure logging settings
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
