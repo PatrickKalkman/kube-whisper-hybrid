@@ -1,6 +1,7 @@
 """
 DeepSeek LLM integration.
 """
+
 import os
 import json
 from typing import Any, Dict, List
@@ -33,7 +34,8 @@ class DeepSeekLLM:
 {tools_formatted}
 
 Instructions:
-1. If the question asks for data that can be retrieved using one of the functions, return a function call JSON without backticks or formatting.
+1. If the question asks for data that can be retrieved using one of the functions,
+return a function call JSON without backticks or formatting.
 2. If it's a general question, conversation, or opinion, return a normal text response.
 3. If unsure, attempt to provide a helpful text response.
 
