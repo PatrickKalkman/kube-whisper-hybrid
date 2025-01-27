@@ -3,7 +3,7 @@ Tests for the assistant module.
 """
 
 # import pytest
-from src.kube_whisper.assistant import Assistant
+from src.kubewhisper.assistant import Assistant
 
 
 def test_assistant_initialization():

@@ -2,6 +2,7 @@ import inspect
 import json
 from typing import Callable, Dict, Any, get_type_hints, Literal
 
+
 class FunctionRegistry:
     functions = []
 
@@ -12,8 +13,8 @@ class FunctionRegistry:
         def decorator(func: Callable):
             # Attach metadata to the function
             func.metadata = {
-                'description': description,
-                'response_template': response_template
+                "description": description,
+                "response_template": response_template,
             }
             cls.functions.append(func)
             return func
@@ -27,28 +28,24 @@ class FunctionRegistry:
         for func in cls.functions:
             func_name = func.__name__
             type_hints = get_type_hints(func)
-            parameters = {
-                'type': 'object',
-                'properties': {},
-                'required': []
-            }
+            parameters = {"type": "object", "properties": {}, "required": []}
 
             for param, param_type in type_hints.items():
-                if param == 'return':
+                if param == "return":
                     continue
                 param_schema = {}
-                if getattr(param_type, '__origin__', None) is Literal:
-                    param_schema['type'] = 'string'
-                    param_schema['enum'] = list(param_type.__args__)
+                if getattr(param_type, "__origin__", None) is Literal:
+                    param_schema["type"] = "string"
+                    param_schema["enum"] = list(param_type.__args__)
                 else:
-                    param_schema['type'] = param_type.__name__
-                parameters['properties'][param] = param_schema
-                parameters['required'].append(param)
+                    param_schema["type"] = param_type.__name__
+                parameters["properties"][param] = param_schema
+                parameters["required"].append(param)
 
             function_schema = {
-                'type': 'function',
-                'name': func_name,
-                'parameters': parameters
+                "type": "function",
+                "name": func_name,
+                "parameters": parameters,
             }
             functions_schema.append(function_schema)
 

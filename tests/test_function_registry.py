@@ -1,15 +1,13 @@
 import json
 import unittest
-from kube_whisper.function_registry import FunctionRegistry
+from kubewhisper.registry.function_registry import FunctionRegistry
+
 
 class TestFunctionRegistry(unittest.TestCase):
     def test_register_function(self):
         FunctionRegistry.functions = []  # Reset the registry
 
-        @FunctionRegistry.register(
-            description="Test function",
-            response_template="Test response"
-        )
+        @FunctionRegistry.register(description="Test function", response_template="Test response")
         def test_func(param1: str):
             pass
 
@@ -18,10 +16,7 @@ class TestFunctionRegistry(unittest.TestCase):
     def test_generate_json_schema(self):
         FunctionRegistry.functions = []  # Reset the registry
 
-        @FunctionRegistry.register(
-            description="Test function",
-            response_template="Test response"
-        )
+        @FunctionRegistry.register(description="Test function", response_template="Test response")
         def test_func(param1: str):
             pass
 
@@ -31,7 +26,8 @@ class TestFunctionRegistry(unittest.TestCase):
         # Optionally, parse the JSON and verify its contents
         schema = json.loads(json_schema)
         self.assertEqual(len(schema), 1)
-        self.assertEqual(schema[0]['name'], 'test_func')
+        self.assertEqual(schema[0]["name"], "test_func")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
