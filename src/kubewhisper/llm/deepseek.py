@@ -90,7 +90,7 @@ Question: {question}"""
 
         return True
 
-    def ask_question(self, question: str, **kwargs) -> Dict[str, Any]:
+    async def ask_question(self, question: str, **kwargs) -> Dict[str, Any]:
         """Send the question to the LLM and process the response."""
         tools = self.get_tools()
         prompt = self.generate_prompt(question, tools)
@@ -100,13 +100,28 @@ Question: {question}"""
             prompt += f"\n\nParameters for the function call:\n{params_json}"
 
         try:
-            response = self.llm.invoke(prompt)
+            response = await self.llm.ainvoke(prompt)
             content = response.content.strip()
             if content.startswith("{"):
                 try:
                     parsed_response = json.loads(content)
                     self.validate_response(parsed_response, tools)
-                    return parsed_response
+                    
+                    # Find the corresponding function
+                    func_name = parsed_response.get("name")
+                    func = next((f for f in FunctionRegistry.functions if f.__name__ == func_name), None)
+                    
+                    if func:
+                        # Execute the function with parameters
+                        from kubewhisper.registry.function_executor import FunctionExecutor
+                        result = await FunctionExecutor.execute_function(
+                            func, 
+                            **parsed_response.get("parameters", {})
+                        )
+                        return result
+                    else:
+                        return {"error": f"Function {func_name} not found"}
+                        
                 except (json.JSONDecodeError, ValueError) as e:
                     return {"error": f"Validation error: {str(e)}"}
             else:
