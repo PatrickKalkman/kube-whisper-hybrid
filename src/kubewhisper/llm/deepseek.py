@@ -90,10 +90,14 @@ Question: {question}"""
 
         return True
 
-    def ask_question(self, question: str) -> Dict[str, Any]:
+    def ask_question(self, question: str, **kwargs) -> Dict[str, Any]:
         """Send the question to the LLM and process the response."""
         tools = self.get_tools()
         prompt = self.generate_prompt(question, tools)
+        
+        if kwargs:
+            params_json = json.dumps(kwargs, indent=2)
+            prompt += f"\n\nParameters for the function call:\n{params_json}"
 
         try:
             response = self.llm.invoke(prompt)

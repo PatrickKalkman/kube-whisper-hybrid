@@ -25,9 +25,24 @@ class TestDeepSeekLLM(unittest.TestCase):
                 question = func.metadata["description"]
                 logging.info(f"Testing function: {func.__name__} with question: '{question}'")
 
-                # Send the question to the LLM
-                response = self.deepseek_llm.ask_question(question)
+                # Generate random parameter values if the function has parameters
+                param_values = {}
+                if hasattr(func, 'metadata') and func.metadata.get('parameters'):
+                    for param_name, param_info in func.metadata['parameters'].get('properties', {}).items():
+                        if param_info.get('type') == 'string':
+                            param_values[param_name] = f"test_{param_name}"
+                        elif param_info.get('type') == 'integer':
+                            param_values[param_name] = 42
+                
+                # Send the question to the LLM with parameters
+                logging.info(f"Testing function: {func.__name__} with question: '{question}' and parameters: {param_values}")
+                response = self.deepseek_llm.ask_question(question, **param_values)
                 logging.info(f"Received response: {response}")
+                
+                # Verify parameters in response if they were provided
+                if param_values and "parameters" in response:
+                    for param_name, param_value in param_values.items():
+                        self.assertEqual(response["parameters"].get(param_name), param_value)
                 # Verify that the correct function is identified
                 if "name" in response:
                     self.assertEqual(response["name"], func.__name__)
