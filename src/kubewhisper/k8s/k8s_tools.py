@@ -53,6 +53,21 @@ async def get_number_of_namespaces() -> Dict[str, Any]:
 @FunctionRegistry.register(
     description="Analyze logs from all pods in a deployment for criticals/errors/warnings in the last hour.",
     response_template="Analysis complete for deployment '{deployment_name}' in namespace '{namespace}'.",
+    parameters={
+        "type": "object",
+        "properties": {
+            "deployment_name": {
+                "type": "string",
+                "description": "Name of the deployment to analyze.",
+            },
+            "namespace": {
+                "type": "string",
+                "description": "Namespace of the deployment (default: 'default').",
+                "default": "default",
+            },
+        },
+        "required": ["deployment_name"],
+    },
 )
 async def analyze_deployment_logs(deployment_name: str, namespace: str = "default") -> Dict[str, Any]:
     """
@@ -154,6 +169,16 @@ async def get_available_clusters() -> Dict[str, Any]:
 @FunctionRegistry.register(
     description="Switch to a different Kubernetes cluster context and persist the change.",
     response_template="Switched to cluster '{cluster_name}'.",
+    parameters={
+        "type": "object",
+        "properties": {
+            "cluster_name": {
+                "type": "string",
+                "description": "Name of the cluster to switch to.",
+            },
+        },
+        "required": ["cluster_name"],
+    },
 )
 async def switch_cluster(cluster_name: str) -> Dict[str, Any]:
     """
