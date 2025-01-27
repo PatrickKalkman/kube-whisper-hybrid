@@ -1,6 +1,5 @@
-import inspect
 import json
-from typing import Callable, Dict, Any, get_type_hints, Literal
+from typing import Callable, get_type_hints, Literal
 
 
 class FunctionRegistry:
