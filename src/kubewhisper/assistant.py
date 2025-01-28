@@ -35,9 +35,9 @@ class Assistant:
             recording_duration: Duration of each recording in seconds
         """
         logger.info("Initializing Kubernetes Assistant...")
-        
+
         self.output_mode = output_mode
-        
+
         # Initialize LLM
         self.llm = DeepSeekLLM()
 
@@ -116,7 +116,7 @@ class Assistant:
                 if callback:
                     callback(response)
                 else:
-                    response_text = response.get('response', response)
+                    response_text = response.get("response", response)
                     if self.output_mode == "voice" and self.speaker:
                         self.speaker.speak(response_text)
                     else:

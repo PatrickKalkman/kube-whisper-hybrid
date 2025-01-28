@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = "==3.11.11"
 dependencies = [
     "aiohttp>=3.11.11",
+    "elevenlabs>=1.50.5",
     "kubernetes>=32.0.0",
     "langchain-openai>=0.3.2",
     "mlx-whisper>=0.4.1",

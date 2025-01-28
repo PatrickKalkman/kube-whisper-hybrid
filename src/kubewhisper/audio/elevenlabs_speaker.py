@@ -17,7 +17,7 @@ class ElevenLabsSpeaker:
         self,
         api_key: Optional[str] = None,
         default_voice_id: str = "9BWtsMINqrJLrRacOk9x",
-        default_model_id: str = "eleven_multilingual_v2"
+        default_model_id: str = "eleven_multilingual_v2",
     ):
         """Initialize the ElevenLabsSpeaker.
 
@@ -26,18 +26,12 @@ class ElevenLabsSpeaker:
             default_voice_id: Default voice ID to use for speech synthesis.
             default_model_id: Default model ID to use for speech synthesis.
         """
-        self.client = ElevenLabs(
-            api_key=api_key or os.environ.get("ELEVENLABS_API_KEY")
-        )
+        self.client = ElevenLabs(api_key=api_key or os.environ.get("ELEVENLABS_API_KEY"))
         self.default_voice_id = default_voice_id
         self.default_model_id = default_model_id
 
     def speak(
-        self,
-        text: str,
-        voice_id: Optional[str] = None,
-        model_id: Optional[str] = None,
-        stream_audio: bool = True
+        self, text: str, voice_id: Optional[str] = None, model_id: Optional[str] = None, stream_audio: bool = True
     ) -> Optional[Any]:
         """Convert text to speech and optionally stream it immediately.
 
@@ -51,23 +45,17 @@ class ElevenLabsSpeaker:
             None if stream_audio is True, otherwise returns the audio stream.
         """
         audio_stream = self.client.text_to_speech.convert_as_stream(
-            text=text,
-            voice_id=voice_id or self.default_voice_id,
-            model_id=model_id or self.default_model_id
+            text=text, voice_id=voice_id or self.default_voice_id, model_id=model_id or self.default_model_id
         )
 
         if stream_audio:
             stream(audio_stream)
             return None
-        
+
         return audio_stream
 
     def speak_to_file(
-        self,
-        text: str,
-        output_path: str,
-        voice_id: Optional[str] = None,
-        model_id: Optional[str] = None
+        self, text: str, output_path: str, voice_id: Optional[str] = None, model_id: Optional[str] = None
     ) -> None:
         """Convert text to speech and save it to a file.
 
@@ -78,10 +66,8 @@ class ElevenLabsSpeaker:
             model_id: Optional model ID to use. Falls back to default if not provided.
         """
         audio = self.client.text_to_speech.convert(
-            text=text,
-            voice_id=voice_id or self.default_voice_id,
-            model_id=model_id or self.default_model_id
+            text=text, voice_id=voice_id or self.default_voice_id, model_id=model_id or self.default_model_id
         )
-        
-        with open(output_path, 'wb') as f:
+
+        with open(output_path, "wb") as f:
             f.write(audio)
