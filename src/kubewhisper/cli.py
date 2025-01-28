@@ -28,7 +28,11 @@ async def run_text_mode(assistant: Assistant, query: str) -> None:
         query: Text query to process
     """
     response = await assistant.process_query(query)
-    print(f"Assistant: {response.get('response', response)}")
+    response_text = response.get('response', response)
+    if assistant.output_mode == "voice" and assistant.speaker:
+        assistant.speaker.speak(response_text)
+    else:
+        print(f"Assistant: {response_text}")
 
 
 def run_voice_mode(assistant: Assistant, duration: float, device_index: Optional[int]) -> None:
@@ -58,10 +62,22 @@ def main():
     # General options
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose logging")
 
-    # Mode selection
+    # Input mode selection
     mode_group = parser.add_mutually_exclusive_group(required=True)
     mode_group.add_argument("-t", "--text", help="Run in text mode with the provided query")
     mode_group.add_argument("--voice", action="store_true", help="Run in voice interaction mode")
+
+    # Output mode selection
+    parser.add_argument(
+        "--output",
+        choices=["text", "voice"],
+        default="text",
+        help="Choose output mode (text or voice via ElevenLabs)"
+    )
+    parser.add_argument(
+        "--elevenlabs-key",
+        help="ElevenLabs API key (can also be set via ELEVENLABS_API_KEY env var)"
+    )
 
     # Voice mode options
     parser.add_argument(
@@ -76,7 +92,13 @@ def main():
     setup_logging(args.verbose)
 
     # Initialize assistant
-    assistant = Assistant(model_path=args.model, input_device=args.device, recording_duration=args.duration)
+    assistant = Assistant(
+        model_path=args.model,
+        input_device=args.device,
+        recording_duration=args.duration,
+        output_mode=args.output,
+        elevenlabs_api_key=args.elevenlabs_key
+    )
 
     # Run in selected mode
     try:

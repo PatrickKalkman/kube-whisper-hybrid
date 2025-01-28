@@ -3,9 +3,10 @@ Main assistant implementation combining speech, LLM, and Kubernetes functionalit
 """
 
 import logging
-from typing import Optional, Callable
+from typing import Optional, Callable, Literal
 from kubewhisper.llm.deepseek import DeepSeekLLM
 from kubewhisper.audio.whisper_transcriber import WhisperTranscriber
+from kubewhisper.audio.elevenlabs_speaker import ElevenLabsSpeaker
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -22,6 +23,8 @@ class Assistant:
         model_path: str = "mlx-community/whisper-large-v3-turbo",
         input_device: Optional[int] = None,
         recording_duration: float = 5.0,
+        output_mode: Literal["text", "voice"] = "text",
+        elevenlabs_api_key: Optional[str] = None,
     ):
         """
         Initialize the assistant with speech recognition and LLM components.
@@ -32,11 +35,14 @@ class Assistant:
             recording_duration: Duration of each recording in seconds
         """
         logger.info("Initializing Kubernetes Assistant...")
-
+        
+        self.output_mode = output_mode
+        
         # Initialize LLM
         self.llm = DeepSeekLLM()
 
-        # Initialize speech transcriber
+        # Initialize speech components
+        self.speaker = ElevenLabsSpeaker(api_key=elevenlabs_api_key) if output_mode == "voice" else None
         self.transcriber = WhisperTranscriber(
             model_path=model_path, input_device=input_device, recording_duration=recording_duration
         )
@@ -110,7 +116,11 @@ class Assistant:
                 if callback:
                     callback(response)
                 else:
-                    print(f"Assistant: {response.get('response', response)}")
+                    response_text = response.get('response', response)
+                    if self.output_mode == "voice" and self.speaker:
+                        self.speaker.speak(response_text)
+                    else:
+                        print(f"Assistant: {response_text}")
 
             import asyncio
 
