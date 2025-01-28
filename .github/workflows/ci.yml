@@ -9,7 +9,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-24.04
+    runs-on: macos-14
     strategy:
       matrix:
         python-version: ["3.11"]
@@ -24,8 +24,7 @@ jobs:
     
     - name: Install system dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y portaudio19-dev python3-pyaudio
+        brew install portaudio
     
     - name: Install uv
       run: |
@@ -40,7 +39,7 @@ jobs:
 
   build:
     needs: test
-    runs-on: ubuntu-24.04
+    runs-on: macos-14
     
     steps:
     - uses: actions/checkout@v4
