@@ -93,18 +93,15 @@ Question: {question}"""
     async def execute_function_call(self, parsed_response: Dict[str, Any]) -> Dict[str, Any]:
         """Execute a function based on the parsed LLM response."""
         from kubewhisper.registry.function_executor import FunctionExecutor
-        
+
         func_name = parsed_response.get("name")
         func = next((f for f in FunctionRegistry.functions if f.__name__ == func_name), None)
-        
+
         if not func:
             return {"error": f"Function {func_name} not found"}
-            
+
         try:
-            result = await FunctionExecutor.execute_function(
-                func, 
-                **parsed_response.get("parameters", {})
-            )
+            result = await FunctionExecutor.execute_function(func, **parsed_response.get("parameters", {}))
             return result
         except Exception as e:
             return {"error": f"Function execution error: {str(e)}"}
@@ -113,7 +110,7 @@ Question: {question}"""
         """Send the question to the LLM and process the response."""
         tools = self.get_tools()
         prompt = self.generate_prompt(question, tools)
-        
+
         if kwargs:
             params_json = json.dumps(kwargs, indent=2)
             prompt += f"\n\nParameters for the function call:\n{params_json}"
@@ -121,7 +118,7 @@ Question: {question}"""
         try:
             response = await self.llm.ainvoke(prompt)
             content = response.content.strip()
-            
+
             if content.startswith("{"):
                 try:
                     parsed_response = json.loads(content)

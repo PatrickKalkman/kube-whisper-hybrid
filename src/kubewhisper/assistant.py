@@ -32,17 +32,15 @@ class Assistant:
             recording_duration: Duration of each recording in seconds
         """
         logger.info("Initializing Kubernetes Assistant...")
-        
+
         # Initialize LLM
         self.llm = DeepSeekLLM()
-        
+
         # Initialize speech transcriber
         self.transcriber = WhisperTranscriber(
-            model_path=model_path,
-            input_device=input_device,
-            recording_duration=recording_duration
+            model_path=model_path, input_device=input_device, recording_duration=recording_duration
         )
-        
+
         self._is_running = False
         logger.info("Assistant initialized successfully")
 
@@ -57,23 +55,23 @@ class Assistant:
             The processed response including any function execution results
         """
         logger.info(f"Processing query: {query}")
-        
+
         # Get LLM response
         response = await self.llm.ask_question(query)
-        
+
         # If response contains a function call, execute it
         if isinstance(response, dict) and "type" in response and response["type"] == "function":
             execution_result = await self.llm.execute_function_call(response)
-            
+
             if "error" in execution_result:
                 logger.error(f"Function execution failed: {execution_result['error']}")
                 return execution_result
-            
+
             if "formatted_response" in execution_result:
                 return {"response": execution_result["formatted_response"]}
-            
+
             return execution_result
-        
+
         return response
 
     async def process_speech(self, audio_data) -> dict:
@@ -89,7 +87,7 @@ class Assistant:
         # Transcribe audio to text
         transcribed_text = self.transcriber.transcribe_audio(audio_data)
         logger.info(f"Transcribed text: {transcribed_text}")
-        
+
         # Process the transcribed text
         return await self.process_query(transcribed_text)
 
@@ -106,7 +104,7 @@ class Assistant:
         def process_speech_callback(transcribed_text: str):
             if not transcribed_text.strip():
                 return
-                
+
             async def process():
                 response = await self.process_query(transcribed_text)
                 if callback:
@@ -115,6 +113,7 @@ class Assistant:
                     print(f"Assistant: {response.get('response', response)}")
 
             import asyncio
+
             asyncio.run(process())
 
         self.transcriber.start_listening(callback=process_speech_callback)
