@@ -2,19 +2,19 @@ import unittest
 import logging
 from kubewhisper.registry.function_registry import FunctionRegistry
 from kubewhisper.llm.deepseek import DeepSeekLLM
-from kubewhisper.k8s import k8s_tools
+from kubewhisper.k8s import k8s_tools  # noqa: F401
 
 # Configure logging settings
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
-class TestDeepSeekLLM(unittest.TestCase):
+class TestDeepSeekLLM(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         """Set up the DeepSeekLLM instance before each test."""
         logging.info("Setting up DeepSeekLLM instance.")
         self.deepseek_llm = DeepSeekLLM()
 
-    def test_registered_functions(self):
+    async def test_registered_functions(self):
         """Test that the LLM returns the correct function for each registered function description."""
         # Get all registered functions
         functions = FunctionRegistry.functions
@@ -38,7 +38,7 @@ class TestDeepSeekLLM(unittest.TestCase):
                 logging.info(
                     f"Testing function: {func.__name__} with question: '{question}' and parameters: {param_values}"
                 )
-                response = self.deepseek_llm.ask_question(question, **param_values)
+                response = await self.deepseek_llm.ask_question(question, **param_values)
                 logging.info(f"Received response: {response}")
 
                 # Verify parameters in response if they were provided
