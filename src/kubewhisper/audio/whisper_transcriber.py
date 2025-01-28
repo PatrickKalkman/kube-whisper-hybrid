@@ -84,9 +84,3 @@ class WhisperTranscriber:
             device_index: Index of the audio input device.
         """
         self.input_device = device_index
-
-
-if __name__ == "__main__":
-    # Example usage
-    transcriber = WhisperTranscriber()
-    transcriber.start_listening()
