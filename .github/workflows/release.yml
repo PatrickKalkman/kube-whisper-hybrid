@@ -10,6 +10,8 @@ jobs:
     runs-on: macos-14
     permissions:
       contents: write  # Needed for creating releases
+    env:
+      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
     
     steps:
     - uses: actions/checkout@v4
