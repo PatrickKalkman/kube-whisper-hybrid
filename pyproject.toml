@@ -15,6 +15,7 @@ dependencies = [
     "soundcard>=0.4.3",
     "sounddevice>=0.5.1",
     "speechrecognition>=3.14.1",
+    "pynput>=1.7.6",
 ]
 
 [tool.hatch.version]

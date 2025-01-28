@@ -2,6 +2,7 @@ import sounddevice as sd
 import numpy as np
 from typing import Optional, Callable
 import mlx_whisper
+from pynput import keyboard
 
 
 class WhisperTranscriber:
@@ -27,6 +28,7 @@ class WhisperTranscriber:
         self.channels = channels
         self.recording_duration = recording_duration
         self.input_device = input_device
+        self._is_recording = False
         self._is_listening = False
 
     def record_audio(self) -> np.ndarray:
@@ -36,9 +38,34 @@ class WhisperTranscriber:
             Normalized audio data as a NumPy array.
         """
         samples = int(self.sample_rate * self.recording_duration)
+        print("Recording... (Press and hold spacebar)")
         audio_data = sd.rec(samples, samplerate=self.sample_rate, channels=self.channels, device=self.input_device)
         sd.wait()
+        print("Recording finished")
         return audio_data.flatten().astype(np.float32)
+
+    def on_press(self, key):
+        """Handle key press events."""
+        try:
+            if key == keyboard.Key.space and not self._is_recording:
+                self._is_recording = True
+                audio_data = self.record_audio()
+                transcribed_text = self.transcribe_audio(audio_data)
+                if self._callback:
+                    self._callback(transcribed_text)
+                else:
+                    print(transcribed_text)
+        except Exception as e:
+            print(f"Error during recording: {e}")
+
+    def on_release(self, key):
+        """Handle key release events."""
+        if key == keyboard.Key.space:
+            self._is_recording = False
+        elif key == keyboard.Key.esc:
+            self._is_listening = False
+            # Stop listener
+            return False
 
     def transcribe_audio(self, audio_data: np.ndarray) -> str:
         """Transcribe audio data using mlx-whisper.
@@ -53,24 +80,20 @@ class WhisperTranscriber:
         return result["text"]
 
     def start_listening(self, callback: Optional[Callable[[str], None]] = None) -> None:
-        """Start continuous listening and transcription.
+        """Start listening for keyboard events to trigger recording.
 
         Args:
             callback: Optional function to process transcribed text.
         """
         self._is_listening = True
-        try:
-            while self._is_listening:
-                audio_data = self.record_audio()
-                transcribed_text = self.transcribe_audio(audio_data)
-
-                if callback:
-                    callback(transcribed_text)
-                else:
-                    print(transcribed_text)
-
-        except KeyboardInterrupt:
-            self.stop_listening()
+        self._callback = callback
+        print("Listening for input... (Press and hold spacebar to record, ESC to quit)")
+        
+        # Set up keyboard listener
+        with keyboard.Listener(
+            on_press=self.on_press,
+            on_release=self.on_release) as listener:
+            listener.join()
 
     def stop_listening(self) -> None:
         """Stop the continuous listening loop."""
