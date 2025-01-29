@@ -107,26 +107,29 @@ class Assistant:
         logger.info("Starting voice interaction mode...")
         self._is_running = True
 
-        def process_speech_callback(transcribed_text: str):
+        async def process_speech_callback(transcribed_text: str):
             if not transcribed_text.strip():
                 return
 
-            async def process():
-                response = await self.process_query(transcribed_text)
-                if callback:
-                    callback(response)
+            response = await self.process_query(transcribed_text)
+            if callback:
+                callback(response)
+            else:
+                response_text = response.get("response", response)
+                if self.output_mode == "voice" and self.speaker:
+                    self.speaker.speak(response_text)
                 else:
-                    response_text = response.get("response", response)
-                    if self.output_mode == "voice" and self.speaker:
-                        self.speaker.speak(response_text)
-                    else:
-                        print(f"Assistant: {response_text}")
+                    print(f"Assistant: {response_text}")
 
-            import asyncio
+        def sync_callback(transcribed_text: str):
+            if self._is_running:  # Only process if still running
+                import asyncio
+                asyncio.run(process_speech_callback(transcribed_text))
 
-            asyncio.run(process())
-
-        self.transcriber.start_listening(callback=process_speech_callback)
+        try:
+            self.transcriber.start_listening(callback=sync_callback)
+        except KeyboardInterrupt:
+            self.stop_voice_interaction()
 
     def stop_voice_interaction(self) -> None:
         """Stop the voice interaction mode."""
