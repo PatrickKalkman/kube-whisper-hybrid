@@ -49,26 +49,31 @@ class WhisperTranscriber:
         try:
             if key == keyboard.Key.space and not self._is_recording:
                 self._is_recording = True
+            return True  # Keep listening for all keys
+        except Exception as e:
+            print(f"Error during key press: {e}")
+            return True  # Continue listening even if there's an error
+
+    def on_release(self, key):
+        """Handle key release events."""
+        try:
+            if key == keyboard.Key.space and self._is_recording:
                 audio_data = self.record_audio()
                 transcribed_text = self.transcribe_audio(audio_data)
                 if self._callback:
                     self._callback(transcribed_text)
                 else:
                     print(transcribed_text)
-                self._is_recording = False  # Reset recording state after processing
-            return True  # Keep listening for all keys
+                self._is_recording = False
+            elif key == keyboard.Key.esc:
+                self._is_listening = False
+                # Stop listener
+                return False
+            return True
         except Exception as e:
-            print(f"Error during recording: {e}")
+            print(f"Error during key release: {e}")
+            self._is_recording = False  # Reset recording state on error
             return True  # Continue listening even if there's an error
-
-    def on_release(self, key):
-        """Handle key release events."""
-        if key == keyboard.Key.space:
-            self._is_recording = False
-        elif key == keyboard.Key.esc:
-            self._is_listening = False
-            # Stop listener
-            return False
 
     def transcribe_audio(self, audio_data: np.ndarray) -> str:
         """Transcribe audio data using mlx-whisper.
