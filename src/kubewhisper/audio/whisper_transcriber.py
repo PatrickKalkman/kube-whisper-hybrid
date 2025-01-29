@@ -47,8 +47,8 @@ class WhisperTranscriber:
     def on_press(self, key):
         """Handle key press events."""
         try:
-            # Suppress spacebar output but don't stop listening
             if key == keyboard.Key.space:
+                # Always suppress spacebar output
                 if not self._is_recording:
                     self._is_recording = True
                     audio_data = self.record_audio()
@@ -57,9 +57,12 @@ class WhisperTranscriber:
                         self._callback(transcribed_text)
                     else:
                         print(transcribed_text)
-                return False
+                    self._is_recording = False  # Reset recording state after processing
+                return False  # Just suppress output, don't stop listening
+            return True  # Allow other keys through
         except Exception as e:
             print(f"Error during recording: {e}")
+            return True  # Continue listening even if there's an error
 
     def on_release(self, key):
         """Handle key release events."""
