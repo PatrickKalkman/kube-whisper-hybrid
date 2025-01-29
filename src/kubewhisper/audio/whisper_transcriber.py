@@ -88,11 +88,9 @@ class WhisperTranscriber:
         self._is_listening = True
         self._callback = callback
         print("Listening for input... (Press and hold spacebar to record, ESC to quit)")
-        
+
         # Set up keyboard listener
-        with keyboard.Listener(
-            on_press=self.on_press,
-            on_release=self.on_release) as listener:
+        with keyboard.Listener(on_press=self.on_press, on_release=self.on_release) as listener:
             listener.join()
 
     def stop_listening(self) -> None:

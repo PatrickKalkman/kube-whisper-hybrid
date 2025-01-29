@@ -32,9 +32,9 @@ class FunctionRegistry:
         functions_schema = []
         for func in cls.functions:
             func_name = func.__name__
-            func_description = func.metadata.get('description', '')
-            parameters = func.metadata.get('parameters')
-            
+            func_description = func.metadata.get("description", "")
+            parameters = func.metadata.get("parameters")
+
             if parameters is None:
                 # Infer parameters from type hints
                 type_hints = get_type_hints(func)

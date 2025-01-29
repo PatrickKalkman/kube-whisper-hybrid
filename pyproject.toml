@@ -1,5 +1,5 @@
 [project]
-name = "kube-whisper-local"
+name = "kubewhisper"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -17,6 +17,9 @@ dependencies = [
     "speechrecognition>=3.14.1",
     "pynput>=1.7.6",
 ]
+
+[project.scripts]
+kubewhisper = "kubewhisper.cli:main"
 
 [tool.hatch.version]
 path = "src/kubewhisper/__about__.py"
