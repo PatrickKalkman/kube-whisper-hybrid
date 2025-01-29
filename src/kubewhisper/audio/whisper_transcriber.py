@@ -49,14 +49,14 @@ class WhisperTranscriber:
         try:
             if key == keyboard.Key.space and not self._is_recording:
                 self._is_recording = True
-                # Suppress the spacebar output
-                return False
                 audio_data = self.record_audio()
                 transcribed_text = self.transcribe_audio(audio_data)
                 if self._callback:
                     self._callback(transcribed_text)
                 else:
                     print(transcribed_text)
+                # Suppress the spacebar output
+                return False
         except Exception as e:
             print(f"Error during recording: {e}")
 
