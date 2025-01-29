@@ -47,15 +47,16 @@ class WhisperTranscriber:
     def on_press(self, key):
         """Handle key press events."""
         try:
-            if key == keyboard.Key.space and not self._is_recording:
-                self._is_recording = True
-                audio_data = self.record_audio()
-                transcribed_text = self.transcribe_audio(audio_data)
-                if self._callback:
-                    self._callback(transcribed_text)
-                else:
-                    print(transcribed_text)
-                # Suppress the spacebar output
+            # Suppress spacebar output but don't stop listening
+            if key == keyboard.Key.space:
+                if not self._is_recording:
+                    self._is_recording = True
+                    audio_data = self.record_audio()
+                    transcribed_text = self.transcribe_audio(audio_data)
+                    if self._callback:
+                        self._callback(transcribed_text)
+                    else:
+                        print(transcribed_text)
                 return False
         except Exception as e:
             print(f"Error during recording: {e}")
