@@ -15,9 +15,9 @@ class DeepSeekLLM:
     def __init__(self):
         """Initialize the DeepSeek LLM with necessary configurations."""
         self.llm = BaseChatOpenAI(
-            model="deepseek-chat",
+            model="deepseek/deepseek-chat",
             openai_api_key=os.environ["DEEPSEEK_API_KEY"],
-            openai_api_base="https://api.deepseek.com",
+            openai_api_base="https://openrouter.ai/api/v1",
             max_tokens=1024,
         )
 

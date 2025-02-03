@@ -28,7 +28,7 @@ async def run_text_mode(assistant: Assistant, query: str) -> None:
         query: Text query to process
     """
     response = await assistant.process_query(query)
-    response_text = response.get('response', response)
+    response_text = response.get("response", response)
     if assistant.output_mode == "voice" and assistant.speaker:
         assistant.speaker.speak(response_text)
     else:
@@ -69,21 +69,15 @@ def main():
 
     # Output mode selection
     parser.add_argument(
-        "--output",
-        choices=["text", "voice"],
-        default="text",
-        help="Choose output mode (text or voice via ElevenLabs)"
+        "--output", choices=["text", "voice"], default="text", help="Choose output mode (text or voice via ElevenLabs)"
     )
-    parser.add_argument(
-        "--elevenlabs-key",
-        help="ElevenLabs API key (can also be set via ELEVENLABS_API_KEY env var)"
-    )
+    parser.add_argument("--elevenlabs-key", help="ElevenLabs API key (can also be set via ELEVENLABS_API_KEY env var)")
 
     # Voice mode options
     parser.add_argument(
         "--model", default="mlx-community/whisper-large-v3-turbo", help="Path or name of the Whisper model to use"
     )
-    parser.add_argument("--duration", type=float, default=5.0, help="Recording duration in seconds for voice mode")
+    parser.add_argument("--duration", type=float, default=4.0, help="Recording duration in seconds for voice mode")
     parser.add_argument("--device", type=int, help="Audio input device index")
 
     args = parser.parse_args()
@@ -97,7 +91,7 @@ def main():
         input_device=args.device,
         recording_duration=args.duration,
         output_mode=args.output,
-        elevenlabs_api_key=args.elevenlabs_key
+        elevenlabs_api_key=args.elevenlabs_key,
     )
 
     # Run in selected mode
