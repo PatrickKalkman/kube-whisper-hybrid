@@ -1,7 +1,5 @@
 # KubeWhisper Hybrid: Voice Control Your Kubernetes Cluster (Now More Affordable!)
 
-![KubeWhisper Hybrid Cover](cover.jpg)
-
 [![KubeWhisper in Action](https://img.youtube.com/vi/IaMOZ9jS8_Q/maxresdefault.jpg)](https://www.youtube.com/watch?v=IaMOZ9jS8_Q)
 
 [![GitHub stars](https://img.shields.io/github/stars/PatrickKalkman/kube-whisper-hybrid)](https://github.com/PatrickKalkman/kube-whisper-hybrid/stargazers)
