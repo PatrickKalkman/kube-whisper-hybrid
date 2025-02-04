@@ -1,5 +1,7 @@
 import unittest
 import logging
+from unittest import skip
+
 from kubewhisper.registry.function_registry import FunctionRegistry
 from kubewhisper.llm.deepseek import DeepSeekLLM
 from kubewhisper.k8s import k8s_tools  # noqa: F401
@@ -8,6 +10,7 @@ from kubewhisper.k8s import k8s_tools  # noqa: F401
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
+@skip("Skipping DeepSeek tests due to high latency issues")
 class TestDeepSeekLLM(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         """Set up the DeepSeekLLM instance before each test."""
